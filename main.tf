@@ -1,3 +1,4 @@
+/*
 # Look up latest Amazon Linux 2023 x86_64 HVM AMI
 data "aws_ami" "al2023" {
   most_recent = true
@@ -122,3 +123,4 @@ resource "aws_instance" "dev_box" {
     ignore_changes = [user_data] # prevents reboots if script changes later
   }
 }
+*/
