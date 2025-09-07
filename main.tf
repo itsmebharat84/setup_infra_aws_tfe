@@ -1,4 +1,4 @@
-/*
+
 # Look up latest Amazon Linux 2023 x86_64 HVM AMI
 data "aws_ami" "al2023" {
   most_recent = true
@@ -30,6 +30,12 @@ data "aws_subnets" "default_public" {
     name   = "vpc-id"
     values = [data.aws_vpc.default.id]
   }
+}
+
+# Create an AWS Key Pair from your local public key
+resource "aws_key_pair" "ec2_key_pair" {
+  key_name   = "my-ec2-key" # Name the key pair in AWS
+  public_key = file("~/.ssh/aws-ec2-key.pub") # Path to your local public key
 }
 
 # Option A: generate a fresh SSH key pair
@@ -95,7 +101,7 @@ resource "aws_instance" "dev_box" {
   subnet_id                   = element(data.aws_subnets.default_public.ids, 0)
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.ec2_sg.id]
-  key_name                    = local.key_name
+  key_name                    = aws_key_pair.ec2_key_pair
   user_data                   = local.user_data
 
   # Recommended metadata settings
@@ -123,4 +129,4 @@ resource "aws_instance" "dev_box" {
     ignore_changes = [user_data] # prevents reboots if script changes later
   }
 }
-*/
+
